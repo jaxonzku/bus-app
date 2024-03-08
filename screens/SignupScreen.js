@@ -40,7 +40,7 @@ export const SignupScreen = ({ navigation }) => {
       })
       .catch((error) => setErrorState(error.message));
   };
-  const [role, setRole] = useState("student");
+  const [role, setRole] = useState("customer");
 
   const handleRoleChange = (newRole) => {
     setRole(newRole);
@@ -125,14 +125,14 @@ export const SignupScreen = ({ navigation }) => {
                 <Text>Select Role:</Text>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <RadioButton
-                    value="student"
-                    status={role === "student" ? "checked" : "unchecked"}
+                    value="customer"
+                    status={role === "customer" ? "checked" : "unchecked"}
                     onPress={() => {
-                      handleRoleChange("student");
-                      handleChange("student");
+                      handleRoleChange("customer");
+                      handleChange("customer");
                     }}
                   />
-                  <Text>Student</Text>
+                  <Text>Customer</Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <RadioButton

@@ -59,32 +59,24 @@ const BookingScreen = ({ navigation }) => {
     });
   };
   const availableBusOperators = (from, to, busOperators, costPerStop) => {
-    // const availableOperators = [];
-    // for (const operator of busOperators) {
-    //   if (
-    //     routes.indexOf(operator.from) <= routes.indexOf(from) &&
-    //     routes.indexOf(operator.to) >= routes.indexOf(to)
-    //   ) {
-    //     availableOperators.push(operator);
-    //   }
-    // }
-    // return availableOperators;
     const availableOperators = [];
 
     for (const operator of busOperators) {
       const startIndex = routes.indexOf(from);
       const endIndex = routes.indexOf(to);
 
-      if (startIndex !== -1 && endIndex !== -1) {
+      if (
+        routes.indexOf(operator.from) <= startIndex &&
+        routes.indexOf(operator.to) >= endIndex
+      ) {
         const stops = Math.abs(endIndex - startIndex); // Calculate the number of stops
-
         const cost = stops * costPerStop; // Calculate the total cost
-
         const operatorWithCost = { ...operator, cost }; // Add the cost to the operator object
         availableOperators.push(operatorWithCost);
       }
     }
 
+    console.log("availableOperators", availableOperators);
     return availableOperators;
   };
 
@@ -112,6 +104,10 @@ const BookingScreen = ({ navigation }) => {
             title="Find Bus"
             style={{ paddingTop: 10 }}
             onPress={() => {
+              console.log(
+                "setting",
+                availableBusOperators(bookFrom, bookTo, [...availOpers], 5)
+              );
               setsuitable(
                 availableBusOperators(bookFrom, bookTo, [...availOpers], 5)
               );

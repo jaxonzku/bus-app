@@ -39,7 +39,7 @@ export const HomeScreen = ({ navigation }) => {
           />
         </View>
       )}
-      {role?.userRole && role?.userRole == "student" && (
+      {role?.userRole && role?.userRole == "customer" && (
         <View style={{ padding: 20 }}>
           <Button
             title="Book Tickets"

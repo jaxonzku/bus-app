@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, Alert } from "react-native";
 import { React, useState, useEffect } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
 import { getDatabase, ref, set, onValue, update } from "firebase/database";
@@ -45,6 +45,19 @@ const DetailedBooking = ({ route }) => {
     });
     update(ref(db, `/userRole/${busID.split("@")[0]}`), {
       myBooking: [{ from: "", to: "", amount: rs }],
+    }).then((r) => {
+      Alert.alert(
+        "Success",
+        "Your booking succesfully",
+        [
+          {
+            text: "OK",
+            onPress: () => console.log("OK Pressed"),
+            style: "default",
+          },
+        ],
+        { cancelable: false }
+      );
     });
   };
 
