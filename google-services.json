@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "286039460319",
+    "project_id": "bus-app-3240a",
+    "storage_bucket": "bus-app-3240a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286039460319:android:a78968b79e50fb700a1c6a",
+        "android_client_info": {
+          "package_name": "com.busapp.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0pYrE3-sKc4A3Fwow09YkwhMunQr-hBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

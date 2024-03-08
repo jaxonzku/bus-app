@@ -1,7 +1,8 @@
-import { initializeApp } from 'firebase/app';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import Constants from 'expo-constants';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { initializeApp } from "firebase/app";
+import { initializeAuth, getReactNativePersistence } from "firebase/auth";
+import Constants from "expo-constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getDatabase } from "firebase/database";
 
 // add firebase config
 const firebaseConfig = {
@@ -11,6 +12,8 @@ const firebaseConfig = {
   storageBucket: Constants.manifest.extra.storageBucket,
   messagingSenderId: Constants.manifest.extra.messagingSenderId,
   appId: Constants.manifest.extra.appId,
+  databaseURL:
+    "https://bus-app-3240a-default-rtdb.asia-southeast1.firebasedatabase.app/",
 };
 
 // initialize firebase
@@ -21,4 +24,6 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-export { auth };
+const db = getDatabase();
+
+export { auth, db };
