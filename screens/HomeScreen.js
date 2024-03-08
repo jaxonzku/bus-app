@@ -12,7 +12,26 @@ export const HomeScreen = () => {
   };
   const [role, setRole] = useState(null);
   const [routes, setRoutes] = useState(null);
+  const [availOpers, setavailOpers] = useState(null);
+  const [suitable, setsuitable] = useState(null);
 
+  console.log("suitable", suitable);
+  const convertObjectToBusOperators = (obj) => {
+    const busOperators = [];
+    let id = 1; // Starting ID for the bus operators
+    for (const key in obj) {
+      if (Object.hasOwnProperty.call(obj, key)) {
+        const operator = obj[key];
+        busOperators.push({
+          id: operator.id,
+          from: operator.from,
+          to: operator.to,
+        });
+        id++; // Increment ID for the next bus operator
+      }
+    }
+    return busOperators;
+  };
   const getUserDetails = () => {
     const details = ref(db, "userRole/" + auth.currentUser.email.split("@")[0]);
     onValue(details, (snapshot) => {
@@ -22,7 +41,7 @@ export const HomeScreen = () => {
     });
   };
   const getRoutes = () => {
-    const detailsr = ref(db, "userRole/routes");
+    const detailsr = ref(db, "/routes/");
     onValue(detailsr, (snapshot) => {
       const routesrs = snapshot.val();
       setRoutes(routesrs);
@@ -36,13 +55,13 @@ export const HomeScreen = () => {
     }));
   };
   const dataListee = convertToArrayOfObjects(routes ?? []);
-  
+
   const setMyRoute = () => {
-    update(ref(db, `/userRole/${auth.currentUser.email.split("@")[0]}`), {
-      myroute: {
-        from: From ?? "",
-        to: To ?? "",
-      },
+    console.log("calling");
+    update(ref(db, `/busOperators/${auth.currentUser.email.split("@")[0]}`), {
+      from: From ?? "",
+      to: To ?? "",
+      id: auth.currentUser.email,
     }).catch((e) => {
       console.log("err", e);
     });
@@ -51,19 +70,28 @@ export const HomeScreen = () => {
     const availableOperators = [];
     for (const operator of busOperators) {
       if (
-        busStops.indexOf(operator.from) <= busStops.indexOf(from) &&
-        busStops.indexOf(operator.to) >= busStops.indexOf(to)
+        routes.indexOf(operator.from) <= routes.indexOf(from) &&
+        routes.indexOf(operator.to) >= routes.indexOf(to)
       ) {
         availableOperators.push(operator);
       }
     }
     return availableOperators;
   };
-  const get
+  const getBusOperators = () => {
+    const opers = ref(db, "/busOperators/");
+    onValue(opers, (snapshot) => {
+      const routesrs = snapshot.val();
+
+      setavailOpers(convertObjectToBusOperators(routesrs));
+      console.log("routesrs", routesrs);
+    });
+  };
 
   useEffect(() => {
     getUserDetails();
     getRoutes();
+    getBusOperators();
   }, []);
 
   const [From, setFrom] = useState(null);
@@ -93,7 +121,9 @@ export const HomeScreen = () => {
           <Button
             title="Set MY Route"
             style={{ paddingTop: 10 }}
-            onPress={() => { setMyRoute }}
+            onPress={() => {
+              setMyRoute();
+            }}
           />
         </View>
       )}
@@ -119,9 +149,27 @@ export const HomeScreen = () => {
               title="Find Bus"
               style={{ paddingTop: 10 }}
               onPress={() => {
-                availableBusOperators(bookFrom,bookTo)
+                setsuitable(
+                  availableBusOperators(bookFrom, bookTo, [...availOpers])
+                );
               }}
             />
+            <View style={styles.container2}>
+              {suitable &&
+                suitable.map((busOperator, index) => (
+                  <View style={styles.tile}>
+                    <Text
+                      style={styles.busId}
+                    >{`Bus ID: ${busOperator.id}`}</Text>
+                    <Text
+                      style={styles.busInfo}
+                    >{`From: ${busOperator.from}`}</Text>
+                    <Text
+                      style={styles.busInfo}
+                    >{`To: ${busOperator.to}`}</Text>
+                  </View>
+                ))}
+            </View>
           </View>
         </View>
       )}
@@ -157,5 +205,19 @@ const styles = StyleSheet.create({
     // backgroundColor: "red",
     padding: 20,
     paddingBottom: 30,
+  },
+  tile: {
+    marginTop: 15,
+    backgroundColor: "#d3e6f0",
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 5,
+  },
+  busId: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  busInfo: {
+    fontSize: 14,
   },
 });
