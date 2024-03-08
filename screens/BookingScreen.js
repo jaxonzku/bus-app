@@ -2,8 +2,9 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import { React, useEffect, useState } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
 import { getDatabase, ref, set, onValue, update } from "firebase/database";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-const BookingScreen = () => {
+const BookingScreen = ({ navigation }) => {
   const [bookFrom, setbookFrom] = useState(null);
   const [bookTo, setbookTo] = useState(null);
   const [availOpers, setavailOpers] = useState(null);
@@ -57,16 +58,33 @@ const BookingScreen = () => {
       console.log("data", routesrs);
     });
   };
-  const availableBusOperators = (from, to, busOperators) => {
+  const availableBusOperators = (from, to, busOperators, costPerStop) => {
+    // const availableOperators = [];
+    // for (const operator of busOperators) {
+    //   if (
+    //     routes.indexOf(operator.from) <= routes.indexOf(from) &&
+    //     routes.indexOf(operator.to) >= routes.indexOf(to)
+    //   ) {
+    //     availableOperators.push(operator);
+    //   }
+    // }
+    // return availableOperators;
     const availableOperators = [];
+
     for (const operator of busOperators) {
-      if (
-        routes.indexOf(operator.from) <= routes.indexOf(from) &&
-        routes.indexOf(operator.to) >= routes.indexOf(to)
-      ) {
-        availableOperators.push(operator);
+      const startIndex = routes.indexOf(from);
+      const endIndex = routes.indexOf(to);
+
+      if (startIndex !== -1 && endIndex !== -1) {
+        const stops = Math.abs(endIndex - startIndex); // Calculate the number of stops
+
+        const cost = stops * costPerStop; // Calculate the total cost
+
+        const operatorWithCost = { ...operator, cost }; // Add the cost to the operator object
+        availableOperators.push(operatorWithCost);
       }
     }
+
     return availableOperators;
   };
 
@@ -95,23 +113,42 @@ const BookingScreen = () => {
             style={{ paddingTop: 10 }}
             onPress={() => {
               setsuitable(
-                availableBusOperators(bookFrom, bookTo, [...availOpers])
+                availableBusOperators(bookFrom, bookTo, [...availOpers], 5)
               );
             }}
           />
-          <View style={styles.container2}>
-            {suitable &&
-              suitable.map((busOperator, index) => (
-                <View style={styles.tile} key={index}>
-                  <Text
-                    style={styles.busId}
-                  >{`Bus ID: ${busOperator.id}`}</Text>
-                  <Text
-                    style={styles.busInfo}
-                  >{`From: ${busOperator.from}`}</Text>
-                  <Text style={styles.busInfo}>{`To: ${busOperator.to}`}</Text>
-                </View>
-              ))}
+
+          <View style={styles.container}>
+            <View style={styles.container2}>
+              {suitable &&
+                suitable.map((busOperator, index) => (
+                  <TouchableOpacity
+                    style={styles.tile}
+                    key={index}
+                    onPress={() => {
+                      navigation.navigate("DetBook", {
+                        busID: busOperator.id,
+                        from: busOperator.from,
+                        to: busOperator.to,
+                        rs: busOperator.cost,
+                      });
+                    }}
+                  >
+                    <Text
+                      style={styles.busId}
+                    >{`Bus ID: ${busOperator.id}`}</Text>
+                    <Text
+                      style={styles.busInfo}
+                    >{`From: ${busOperator.from}`}</Text>
+                    <Text
+                      style={styles.busInfo}
+                    >{`To: ${busOperator.to}`}</Text>
+                    <Text
+                      style={styles.busInfo}
+                    >{`Amount: ${busOperator.cost} rs`}</Text>
+                  </TouchableOpacity>
+                ))}
+            </View>
           </View>
         </View>
       </View>
@@ -123,10 +160,25 @@ export default BookingScreen;
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    margin: 10,
+    // flex: 1,
+    padding: 10,
+    overflow: "scroll",
+    height: 350,
+    // backgroundColor:"red"
+  },
+  container2: {},
+  tile: {
+    backgroundColor: "#f0f0f0",
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 5,
+  },
+  busId: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  busInfo: {
+    fontSize: 14,
   },
   borderlessButtonContainer: {
     marginTop: 16,
@@ -139,19 +191,5 @@ const styles = StyleSheet.create({
     // backgroundColor: "red",
     padding: 20,
     paddingBottom: 30,
-  },
-  tile: {
-    marginTop: 15,
-    backgroundColor: "#d3e6f0",
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 5,
-  },
-  busId: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  busInfo: {
-    fontSize: 14,
   },
 });

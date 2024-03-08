@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import { View, StyleSheet, Button, Text } from "react-native";
+import { View, Alert, StyleSheet, Button, Text, TextInput } from "react-native";
 
 import { getDatabase, ref, set, onValue, update } from "firebase/database";
 import { auth } from "../../config";
@@ -16,16 +16,37 @@ const SetRoute = () => {
   const [From, setFrom] = useState(null);
   const [To, setTo] = useState(null);
   const dataListee = convertToArrayOfObjects(routes ?? []);
+  const [seatNumber, setSeatNumber] = useState(0);
   const db = getDatabase();
   const setMyRoute = () => {
+    const seatsObject = {};
+    for (let i = 0; i <= seatNumber; i++) {
+      seatsObject[i] = false;
+    }
     console.log("calling");
     update(ref(db, `/busOperators/${auth.currentUser.email.split("@")[0]}`), {
       from: From ?? "",
       to: To ?? "",
       id: auth.currentUser.email,
-    }).catch((e) => {
-      console.log("err", e);
-    });
+      seats: seatsObject,
+    })
+      .then((e) => {
+        Alert.alert(
+          "Success",
+          "Your Route set succesfully",
+          [
+            {
+              text: "OK",
+              onPress: () => console.log("OK Pressed"),
+              style: "default",
+            },
+          ],
+          { cancelable: false }
+        );
+      })
+      .catch((e) => {
+        console.log("err", e);
+      });
   };
   const convertObjectToBusOperators = (obj) => {
     const busOperators = [];
@@ -56,6 +77,14 @@ const SetRoute = () => {
     });
   };
 
+  const handleChange = (value) => {
+    // Ensure that only numeric characters are entered
+    const regex = /^[0-9]*$/;
+    if (regex.test(value) || value === "") {
+      setSeatNumber(value);
+    }
+  };
+
   return (
     <View>
       <Text>SetRoute</Text>
@@ -74,6 +103,18 @@ const SetRoute = () => {
           save="value"
         />
         <View style={{ paddingBottom: 10 }}></View>
+        <View>
+          <TextInput
+            style={styles.input}
+            value={seatNumber}
+            onChangeText={handleChange}
+            placeholder="Enter available seat count"
+            keyboardType="numeric"
+          />
+        </View>
+
+        <View style={{ paddingBottom: 10 }}></View>
+
         <Button
           title="Set MY Route"
           style={{ paddingTop: 10 }}
@@ -89,6 +130,13 @@ const SetRoute = () => {
 export default SetRoute;
 
 const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
   container: {
     display: "flex",
     flexDirection: "column",
