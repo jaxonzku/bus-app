@@ -1,25 +1,28 @@
 {
-  "cli": {
-    "version": ">= 7.3.0"
-  },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
-    },
-    "preview": {
-      "distribution": "internal",
-      "env": {
-        "API_KEY": "AIzaSyDTrfErWcRO6XHA889kuaTqewd2NNBRLRU",
-        "AUTH_DOMAIN": "bus-app-3240a.firebaseapp.com",
-        "STORAGE_BUCKET": "286039460319",
-        "MESSAGING_SENDER_ID": "286039460319",
-        "APP_ID": "1:286039460319:android:a78968b79e50fb700a1c6a"
-      }
-    },
-    "production": {}
-  },
-  "submit": {
-    "production": {}
-  }
+	"cli": {
+		"version": ">= 7.3.0"
+	},
+	"build": {
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal"
+		},
+		"preview": {
+			"distribution": "internal",
+			"env": {
+				"API_KEY": "AIzaSyDTrfErWcRO6XHA889kuaTqewd2NNBRLRU",
+				"AUTH_DOMAIN": "bus-app-3240a.firebaseapp.com",
+				"STORAGE_BUCKET": "286039460319",
+				"MESSAGING_SENDER_ID": "286039460319",
+				"APP_ID": "1:286039460319:android:a78968b79e50fb700a1c6a"
+			},
+			"android": {
+				"buildType": "apk"
+			}
+		},
+		"production": {}
+	},
+	"submit": {
+		"production": {}
+	}
 }

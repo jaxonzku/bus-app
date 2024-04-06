@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { getDatabase, ref, set, onValue, update } from "firebase/database";
-import { auth } from "../../bus-app/config";
+import { auth } from "../config";
 
 const MyBookings = () => {
 	const db = getDatabase();

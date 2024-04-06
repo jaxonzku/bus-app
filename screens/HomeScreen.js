@@ -116,15 +116,17 @@ export const HomeScreen = ({ navigation }) => {
 					}}
 				/>
 			</View>
-			<View style={{ padding: 20 }}>
-				<Button
-					title="Top up"
-					style={{ paddingTop: 10, padding: 10, backgroundColor: "green" }}
-					onPress={() => {
-						navigation.navigate("Topup");
-					}}
-				/>
-			</View>
+			{role?.userRole && role?.userRole == "customer" && (
+				<View style={{ padding: 20 }}>
+					<Button
+						title="Top up"
+						style={{ paddingTop: 10, padding: 10, backgroundColor: "green" }}
+						onPress={() => {
+							navigation.navigate("Topup");
+						}}
+					/>
+				</View>
+			)}
 			{role?.userRole && role?.userRole == "customer" && (
 				<View style={{ padding: 20 }}>
 					<Button
@@ -155,7 +157,6 @@ export const HomeScreen = ({ navigation }) => {
 						style={{ paddingTop: 10, padding: 10, backgroundColor: "green" }}
 						onPress={async () => {
 							let cBus = await getSessionData("cBus");
-							console.log("cBus", cBus);
 							if (cBus != null) {
 								const busOperdetails = ref(
 									db,
@@ -165,7 +166,6 @@ export const HomeScreen = ({ navigation }) => {
 								onValue(busOperdetails, (snapshot) => {
 									busoperatorAlert = snapshot.val();
 								});
-								console.log("list of book", busoperatorAlert);
 								update(ref(db, `/busOperators/${cBus.split("@")[0]}/`), {
 									...busoperatorAlert,
 									alert: alerts,

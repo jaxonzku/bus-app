@@ -11,6 +11,7 @@ const ScanBus = ({ navigation }) => {
 	const [scanned, setScanned] = useState(false);
 	const [scannedID, setScannedID] = useState("");
 	const db = getDatabase();
+	console.log("scanned", scanned);
 
 	async function setSessionData(key, value) {
 		try {
@@ -33,7 +34,6 @@ const ScanBus = ({ navigation }) => {
 		onValue(busBookings, (snapshot) => {
 			busBookingsList = snapshot.val();
 		});
-		console.log("list of book", busBookingsList);
 		for (let i = 0; i < busBookingsList?.length; i++) {
 			// Check if the busid matches the idToCheck
 			if (
@@ -55,6 +55,8 @@ const ScanBus = ({ navigation }) => {
 	};
 
 	function isBusIdPresent(idToCheck, myBooking) {
+		console.log("myBooking", myBooking);
+		console.log("idToCheck", idToCheck);
 		for (let i = 0; i < myBooking.length; i++) {
 			if (myBooking[i].busid === idToCheck) {
 				console.log("found ");
@@ -62,11 +64,11 @@ const ScanBus = ({ navigation }) => {
 				return true; // Found the id
 			}
 		}
-
 		return false;
 	}
 
-	const checkentry = (ID) => {
+	const checkentry = (IDs) => {
+		console.log("calling check entry", IDs);
 		const oldBookingsUser = ref(
 			db,
 			`/userRole/${auth.currentUser.email.split("@")[0]}/myBooking`
@@ -75,16 +77,17 @@ const ScanBus = ({ navigation }) => {
 		onValue(oldBookingsUser, (snapshot) => {
 			olddatauser = snapshot.val();
 		});
-		isBusIdPresent("c1@g.com", olddatauser);
-
-		console.log("olddatauser", olddatauser);
+		isBusIdPresent(IDs, olddatauser);
 	};
 
 	useEffect(() => {
-		checkentry();
-	}, []);
+		if (scanned) {
+			checkentry(scannedID);
+		}
+	}, [scannedID, scanned]);
 
 	const handleBarCodeScanned = ({ type, data }) => {
+		console.log("scanning", data);
 		setScanned(true);
 		setScannedID(data);
 	};
@@ -114,15 +117,17 @@ const ScanBus = ({ navigation }) => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Welcome to the Barcode Scanner App!</Text>
-			<Text style={styles.paragraph}>Scan a barcode to start your job.</Text>
+			<Text style={styles.title}>Please Scan The Bus</Text>
 			{renderCamera()}
 			<TouchableOpacity
 				style={styles.button}
-				onPress={() => setScanned(false)}
-				disabled={scanned}
+				onPress={() => {
+					console.log("press");
+					setScanned(false);
+				}}
+				// disabled={scanned}
 			>
-				<Text style={styles.buttonText}>Scan QR to Start your job</Text>
+				<Text style={styles.buttonText}>Scan QR</Text>
 			</TouchableOpacity>
 		</View>
 	);

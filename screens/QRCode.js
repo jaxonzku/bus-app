@@ -11,7 +11,6 @@ const QRCodeScreen = () => {
 			<View
 				style={{
 					padding: 10,
-					// backgroundColor: "red",
 					margin: 10,
 					display: "flex",
 					justifyContent: "center",

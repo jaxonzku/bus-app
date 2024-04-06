@@ -25,6 +25,14 @@ export default {
 		android: {
 			package: "com.busapp.app",
 		},
+		plugins: [
+			[
+				"expo-barcode-scanner",
+				{
+					cameraPermission: "Allow $(PRODUCT_NAME) to access camera.",
+				},
+			],
+		],
 		extra: {
 			eas: {
 				projectId: "13ae21c6-222c-4f0e-84cb-ea96b35aaef1",
