@@ -48,24 +48,74 @@ const DetailedBooking = ({ route }) => {
 		onValue(oldBookings, (snapshot) => {
 			olddata = snapshot.val();
 		});
-		// update(ref(db, `/userRole/${busID.split("@")[0]}`), {
-
-		//    myBooking: [...olddata, { from: bookFrom, to: bookTo, amount: rs }]
-
-		// }).then((r) => {
-		// 	Alert.alert(
-		// 		"Success",
-		// 		"Your booking succesfully",
-		// 		[
-		// 			{
-		// 				text: "OK",
-		// 				onPress: () => console.log("OK Pressed"),
-		// 				style: "default",
-		// 			},
-		// 		],
-		// 		{ cancelable: false }
-		// 	);
-		// });
+		console.log("olddata", olddata);
+		if (olddata == null) {
+			update(ref(db, `/userRole/${busID.split("@")[0]}`), {
+				myBooking: [{ from: bookFrom, to: bookTo, amount: rs }],
+			}).then((r) => {
+				Alert.alert(
+					"Success",
+					"Your booking succesfully",
+					[
+						{
+							text: "OK",
+							onPress: () => console.log("OK Pressed"),
+							style: "default",
+						},
+					],
+					{ cancelable: false }
+				);
+			});
+			update(ref(db, `/userRole/${auth.currentUser.email.split("@")[0]}`), {
+				myBooking: [{ from: bookFrom, to: bookTo, amount: rs }],
+			}).then((r) => {
+				Alert.alert(
+					"Success",
+					"Your booking succesfully",
+					[
+						{
+							text: "OK",
+							onPress: () => console.log("OK Pressed"),
+							style: "default",
+						},
+					],
+					{ cancelable: false }
+				);
+			});
+		} else {
+			update(ref(db, `/userRole/${busID.split("@")[0]}`), {
+				myBooking: [...olddata, { from: bookFrom, to: bookTo, amount: rs }],
+			}).then((r) => {
+				Alert.alert(
+					"Success",
+					"Your booking succesfully",
+					[
+						{
+							text: "OK",
+							onPress: () => console.log("OK Pressed"),
+							style: "default",
+						},
+					],
+					{ cancelable: false }
+				);
+			});
+			update(ref(db, `/userRole/${auth.currentUser.email.split("@")[0]}`), {
+				myBooking: [{ from: bookFrom, to: bookTo, amount: rs }],
+			}).then((r) => {
+				Alert.alert(
+					"Success",
+					"Your booking succesfully",
+					[
+						{
+							text: "OK",
+							onPress: () => console.log("OK Pressed"),
+							style: "default",
+						},
+					],
+					{ cancelable: false }
+				);
+			});
+		}
 	};
 
 	return (

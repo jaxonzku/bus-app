@@ -7,6 +7,7 @@ import SetRoute from "../screens/BusOperator/SetRoute";
 import DetailedBooking from "../screens/Booking/DetailedBooking";
 import MyBookings from "../screens/MyBookings";
 import TopUP from "../screens/TopUP";
+import QRCodeScreen from "../screens/QRCode";
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ export const AppStack = () => {
 			<Stack.Screen name="DetBook" component={DetailedBooking} />
 			<Stack.Screen name="MyBookings" component={MyBookings} />
 			<Stack.Screen name="Topup" component={TopUP} />
+			<Stack.Screen name="QRCODE" component={QRCodeScreen} />
 		</Stack.Navigator>
 	);
 };

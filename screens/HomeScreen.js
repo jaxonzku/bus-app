@@ -83,6 +83,26 @@ export const HomeScreen = ({ navigation }) => {
 					}}
 				/>
 			</View>
+			{role?.userRole && role?.userRole == "customer" && (
+				<View style={{ padding: 20 }}>
+					<Button
+						title="Alert"
+						style={{ paddingTop: 10, padding: 10, backgroundColor: "green" }}
+						onPress={() => {}}
+					/>
+				</View>
+			)}
+			{role?.userRole && role?.userRole == "busoperator" && (
+				<View style={{ padding: 20 }}>
+					<Button
+						title="My QR Code"
+						style={{ paddingTop: 10, padding: 10, backgroundColor: "green" }}
+						onPress={() => {
+							navigation.navigate("QRCODE");
+						}}
+					/>
+				</View>
+			)}
 
 			<Button
 				title="Sign Out"
