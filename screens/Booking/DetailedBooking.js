@@ -48,26 +48,18 @@ const DetailedBooking = ({ route }) => {
 		onValue(oldBookings, (snapshot) => {
 			olddata = snapshot.val();
 		});
-		console.log("olddata", olddata);
+		// console.log("olddata", olddata);
 		if (olddata == null) {
 			update(ref(db, `/userRole/${busID.split("@")[0]}`), {
-				myBooking: [{ from: bookFrom, to: bookTo, amount: rs }],
-			}).then((r) => {
-				Alert.alert(
-					"Success",
-					"Your booking succesfully",
-					[
-						{
-							text: "OK",
-							onPress: () => console.log("OK Pressed"),
-							style: "default",
-						},
-					],
-					{ cancelable: false }
-				);
-			});
-			update(ref(db, `/userRole/${auth.currentUser.email.split("@")[0]}`), {
-				myBooking: [{ from: bookFrom, to: bookTo, amount: rs }],
+				myBooking: [
+					{
+						from: bookFrom,
+						to: bookTo,
+						amount: rs,
+						busid: busID,
+						userID: auth.currentUser.email,
+					},
+				],
 			}).then((r) => {
 				Alert.alert(
 					"Success",
@@ -84,7 +76,16 @@ const DetailedBooking = ({ route }) => {
 			});
 		} else {
 			update(ref(db, `/userRole/${busID.split("@")[0]}`), {
-				myBooking: [...olddata, { from: bookFrom, to: bookTo, amount: rs }],
+				myBooking: [
+					...olddata,
+					{
+						from: bookFrom,
+						to: bookTo,
+						amount: rs,
+						busid: busID,
+						userID: auth.currentUser.email,
+					},
+				],
 			}).then((r) => {
 				Alert.alert(
 					"Success",
@@ -99,8 +100,50 @@ const DetailedBooking = ({ route }) => {
 					{ cancelable: false }
 				);
 			});
+		}
+		const oldBookingsUser = ref(
+			db,
+			`/userRole/${auth.currentUser.email.split("@")[0]}/myBooking`
+		);
+		let olddatauser;
+		onValue(oldBookingsUser, (snapshot) => {
+			olddatauser = snapshot.val();
+		});
+		if (olddatauser == null) {
 			update(ref(db, `/userRole/${auth.currentUser.email.split("@")[0]}`), {
-				myBooking: [{ from: bookFrom, to: bookTo, amount: rs }],
+				myBooking: [
+					{
+						from: bookFrom,
+						to: bookTo,
+						amount: rs,
+						busid: busID,
+					},
+				],
+			}).then((r) => {
+				Alert.alert(
+					"Success",
+					"Your booking succesfully",
+					[
+						{
+							text: "OK",
+							onPress: () => console.log("OK Pressed"),
+							style: "default",
+						},
+					],
+					{ cancelable: false }
+				);
+			});
+		} else {
+			update(ref(db, `/userRole/${auth.currentUser.email.split("@")[0]}`), {
+				myBooking: [
+					...olddatauser,
+					{
+						from: bookFrom,
+						to: bookTo,
+						amount: rs,
+						busid: busID,
+					},
+				],
 			}).then((r) => {
 				Alert.alert(
 					"Success",

@@ -4,8 +4,26 @@ import { signOut } from "firebase/auth";
 import { getDatabase, ref, set, onValue, update } from "firebase/database";
 import { auth } from "../config";
 import { SelectList } from "react-native-dropdown-select-list";
+import * as SecureStore from "expo-secure-store";
+import { string } from "yup";
 
 export const HomeScreen = ({ navigation }) => {
+	const [alerting, setalerting] = useState(false);
+	async function getSessionData(key) {
+		try {
+			const data = await SecureStore.getItemAsync(key);
+			if (data !== null) {
+				console.log("Retrieved data:", data);
+				return data;
+			} else {
+				console.log("No data found");
+				return null;
+			}
+		} catch (error) {
+			console.error("Error retrieving data:", error);
+			return null;
+		}
+	}
 	const db = getDatabase();
 	const handleLogout = () => {
 		signOut(auth).catch((error) => console.log("Error logging out: ", error));
@@ -34,15 +52,39 @@ export const HomeScreen = ({ navigation }) => {
 		});
 	};
 
+	const getAlert = () => {
+		const alertinfo = ref(
+			db,
+			"busOperators/" + auth.currentUser.email.split("@")[0] + "/alert"
+		);
+
+		onValue(alertinfo, (snapshot) => {
+			const data = snapshot.val();
+			setalerting(data);
+		});
+	};
+
 	useEffect(() => {
 		getUserDetails();
 		getAmount();
+		getAlert();
 	}, []);
+
+	useEffect(() => {
+		console.log("alering", alerting);
+		if (alerting) {
+			alert(`somebody is in trouble,please stop the bus`);
+		}
+	}, [alerting]);
+
+	const [alerts, setalert] = useState(false);
 
 	return (
 		<View style={styles.container}>
 			<Text>{`you are a ${role?.userRole}`}</Text>
-			<Text>{`Your Balance : ${balance}`}</Text>
+			{role?.userRole && role?.userRole == "customer" && (
+				<Text>{`Your Balance : ${balance}`}</Text>
+			)}
 			{role?.userRole && role?.userRole == "busoperator" && (
 				<View style={{ padding: 20 }}>
 					<Button
@@ -86,9 +128,11 @@ export const HomeScreen = ({ navigation }) => {
 			{role?.userRole && role?.userRole == "customer" && (
 				<View style={{ padding: 20 }}>
 					<Button
-						title="Alert"
+						title="Enter Bus"
 						style={{ paddingTop: 10, padding: 10, backgroundColor: "green" }}
-						onPress={() => {}}
+						onPress={() => {
+							navigation.navigate("ScanBus");
+						}}
 					/>
 				</View>
 			)}
@@ -99,6 +143,35 @@ export const HomeScreen = ({ navigation }) => {
 						style={{ paddingTop: 10, padding: 10, backgroundColor: "green" }}
 						onPress={() => {
 							navigation.navigate("QRCODE");
+						}}
+					/>
+				</View>
+			)}
+
+			{role?.userRole && role?.userRole == "customer" && (
+				<View style={{ padding: 20 }}>
+					<Button
+						title={alerts ? "Turn Alert ON" : "Turn Alert Off"}
+						style={{ paddingTop: 10, padding: 10, backgroundColor: "green" }}
+						onPress={async () => {
+							let cBus = await getSessionData("cBus");
+							console.log("cBus", cBus);
+							if (cBus != null) {
+								const busOperdetails = ref(
+									db,
+									`/busOperators/${cBus.split("@")[0]}`
+								);
+								let busoperatorAlert;
+								onValue(busOperdetails, (snapshot) => {
+									busoperatorAlert = snapshot.val();
+								});
+								console.log("list of book", busoperatorAlert);
+								update(ref(db, `/busOperators/${cBus.split("@")[0]}/`), {
+									...busoperatorAlert,
+									alert: alerts,
+								});
+								setalert((prev) => !prev);
+							}
 						}}
 					/>
 				</View>

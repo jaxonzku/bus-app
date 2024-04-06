@@ -31,6 +31,15 @@ const MyBookings = () => {
 					<Text style={styles.tileText}>From: {booking.from}</Text>
 					<Text style={styles.tileText}>To: {booking.to}</Text>
 					<Text style={styles.tileText}>Amount: {booking.amount}</Text>
+					{booking.userEntered ? (
+						<Text style={[styles.tileText, { backgroundColor: "green" }]}>
+							Customer Entered
+						</Text>
+					) : (
+						<Text style={[styles.tileText, { backgroundColor: "red" }]}>
+							Customer Not in the bus
+						</Text>
+					)}
 				</View>
 			))}
 		</View>
